@@ -22,7 +22,14 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.encoder;
 
-rootProject.name = 'okhttp-oauth'
+import okio.ByteString;
+
+public class Base64Encoder {
+
+    public static String encode(String input) {
+        return ByteString.of(input.getBytes()).base64();
+    }
+
+}

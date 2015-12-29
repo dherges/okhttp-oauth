@@ -22,7 +22,31 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth;
 
-rootProject.name = 'okhttp-oauth'
+/**
+ * OAuth constants
+ */
+public interface OAuth {
+
+    String CALLBACK = "oauth_callback";
+    String CALLBACK_CONFIRMED = "oauth_callback_confirmed";
+    String CONSUMER_KEY = "oauth_consumer_key";
+    String NONCE = "oauth_nonce";
+    String SCREEN_NAME = "screen_name";
+    String SIGNATURE = "oauth_signature";
+    String SIGNATURE_METHOD = "oauth_signature_method";
+    String TIMESTAMP = "oauth_timestamp";
+    String TOKEN = "oauth_token";
+    String TOKEN_SECRET = "oauth_token_secret";
+    String VERIFIER = "oauth_verifier";
+    String VERSION = "oauth_version";
+
+
+    String CALLBACK_VALUE_OOB = "oob";
+    String VERSION_VALUE_10 = "1.0";
+    String SIGNATURE_METHOD_VALUE_HMAC_SHA1 = "HMAC-SHA1";
+    String SIGNATURE_METHOD_VALUE_RSA_SHA1 = "RSA-SHA1";
+    String SIGNATURE_METHOD_VALUE_PLAINTEXT = "PLAINTEXT";
+
+}

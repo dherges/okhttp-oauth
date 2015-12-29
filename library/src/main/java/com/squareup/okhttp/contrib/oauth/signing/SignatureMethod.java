@@ -22,7 +22,36 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.signing;
 
-rootProject.name = 'okhttp-oauth'
+/**
+ * Abstraction for creating oauth signatures
+ */
+public interface SignatureMethod {
+
+    /**
+     * Initializes the signing key used by this instance.
+     *
+     * @param consumerSecret Consumer secret
+     * @param tokenSecret Token secret
+     * @return Self instance for method chaining
+     * @throws SigningException
+     */
+    SignatureMethod withKey(String consumerSecret, String tokenSecret) throws SigningException;
+
+    /**
+     * Creates a signature of the given base string.
+     *
+     * @param baseString Base string input
+     * @return Signature string
+     * @throws SigningException
+     */
+    String signatureOf(String baseString) throws SigningException;
+
+    /**
+     * Returns the name of the signature method
+     *
+     * @return Example values: 'HMAC-SHA1', 'RSA-SHA1', 'PLAINTEXT'
+     */
+    String methodName();
+}

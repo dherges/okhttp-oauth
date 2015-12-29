@@ -22,7 +22,14 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.signing;
 
-rootProject.name = 'okhttp-oauth'
+import java.io.IOException;
+
+public class SigningException extends IOException {
+
+    public SigningException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+}

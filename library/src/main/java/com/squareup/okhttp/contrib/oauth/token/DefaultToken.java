@@ -22,7 +22,25 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.token;
 
-rootProject.name = 'okhttp-oauth'
+public class DefaultToken implements Token {
+
+    protected String value;
+    protected String secret;
+
+    public DefaultToken(String value, String secret) {
+        this.value = value;
+        this.secret = secret;
+    }
+
+    @Override
+    public String value() {
+        return value;
+    }
+
+    @Override
+    public String secret() {
+        return secret;
+    }
+}

@@ -22,7 +22,10 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.signing;
 
-rootProject.name = 'okhttp-oauth'
+/** Provider creating nonce sequences */
+public interface NonceGenerator {
+
+    String create();
+}

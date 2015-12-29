@@ -22,7 +22,39 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.signing;
 
-rootProject.name = 'okhttp-oauth'
+import com.squareup.okhttp.contrib.oauth.OAuth;
+import com.squareup.okhttp.contrib.oauth.encoder.PercentEncoder;
+
+import okio.Buffer;
+
+public class PlaintextSignatureMethod implements SignatureMethod {
+
+    private String consumerSecret;
+    private String tokenSecret;
+
+    @Override
+    public SignatureMethod withKey(String consumerSecret, String tokenSecret) throws SigningException {
+        this.consumerSecret = consumerSecret;
+        this.tokenSecret = tokenSecret;
+
+        return this;
+    }
+
+    @Override
+    public String signatureOf(String baseString) throws SigningException {
+
+        return new Buffer()
+                .writeUtf8(PercentEncoder.encode(consumerSecret))
+                .writeByte('&')
+                .writeUtf8(PercentEncoder.encode(tokenSecret))
+                .readUtf8();
+    }
+
+    @Override
+    public String methodName() {
+        return OAuth.SIGNATURE_METHOD_VALUE_PLAINTEXT;
+    }
+
+}

@@ -22,7 +22,29 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth;
 
-rootProject.name = 'okhttp-oauth'
+import com.squareup.okhttp.contrib.oauth.request.AuthorizationStrategy;
+import com.squareup.okhttp.contrib.oauth.request.OAuthRequest;
+import com.squareup.okhttp.contrib.oauth.signing.NonceGenerator;
+import com.squareup.okhttp.contrib.oauth.signing.SignatureMethod;
+import com.squareup.okhttp.contrib.oauth.signing.SigningException;
+import com.squareup.okhttp.contrib.oauth.signing.TimestampGenerator;
+import com.squareup.okhttp.contrib.oauth.token.Token;
+
+/** Abstraction for the service contract between consumer and provider */
+public interface OAuthService {
+
+
+    SignatureMethod signatureMethod();
+
+    NonceGenerator nonceGenerator();
+
+    TimestampGenerator timestampGenerator();
+
+    AuthorizationStrategy authorizationStrategy();
+
+    OAuthRequest authorizeRequest(OAuthRequest request, OAuthConsumer consumer, Token token)
+            throws SigningException;
+
+}

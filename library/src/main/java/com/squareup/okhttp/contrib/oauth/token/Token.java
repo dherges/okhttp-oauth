@@ -22,7 +22,11 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.token;
 
-rootProject.name = 'okhttp-oauth'
+public interface Token {
+
+    String value();
+
+    String secret();
+}

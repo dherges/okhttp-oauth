@@ -22,7 +22,37 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.signing;
 
-rootProject.name = 'okhttp-oauth'
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+import com.squareup.okhttp.contrib.oauth.OAuthService;
+import com.squareup.okhttp.contrib.oauth.request.OAuthRequest;
+
+import java.io.IOException;
+
+/** OK HTTP interceptor that signs requests */
+public class SigningInterceptor implements Interceptor {
+
+    protected OAuthService service;
+
+    @Override
+    public Response intercept(Chain chain) throws IOException {
+        final Request request = chain.request();
+        if (service == null || request.header("X-OKHttp-OAuth-Authorized") != null) {
+            return chain.proceed(request);
+        }
+
+        return chain.proceed(signed(request));
+    }
+
+    /** Returns a oauth-signed request */
+    protected Request signed(Request request) throws SigningException {
+        OAuthRequest req = new OAuthRequest(request);
+
+        // TODO: need the token and consumer here ...
+        return service.authorizeRequest(req, null, null).authorizedRequest();
+    }
+
+}

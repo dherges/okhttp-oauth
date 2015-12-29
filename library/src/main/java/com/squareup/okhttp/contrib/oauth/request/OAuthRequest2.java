@@ -22,7 +22,36 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.request;
 
-rootProject.name = 'okhttp-oauth'
+import java.util.Map;
+
+public abstract class OAuthRequest2<T> {
+
+    protected T wrapped;
+
+    public OAuthRequest2(T wrapped) {
+        this.wrapped = wrapped;
+    }
+
+    /** Returns the http verb */
+    public abstract String verb();
+
+    /** Returns the http base url (without query and fragment) */
+    public abstract String baseUrl();
+
+    /** Returns the oauth_* params */
+    public abstract Map<String, String> oauth();
+
+    public abstract void oauth(String key, String value);
+
+    public abstract String oauth(String key);
+
+    /** Returns the query params */
+    public abstract Map<String, String> query();
+
+    /** Returns the (form-encoded) body params */
+    public abstract Map<String, String> body();
+
+    public abstract T request();
+}

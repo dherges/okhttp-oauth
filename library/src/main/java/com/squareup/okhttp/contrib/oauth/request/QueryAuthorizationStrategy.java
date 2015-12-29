@@ -22,7 +22,18 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.request;
 
-rootProject.name = 'okhttp-oauth'
+import com.squareup.okhttp.contrib.oauth.request.AuthorizationStrategy;
+import com.squareup.okhttp.contrib.oauth.request.OAuthRequest;
+
+public class QueryAuthorizationStrategy implements AuthorizationStrategy {
+
+    @Override
+    public void applyTo(OAuthRequest request) {
+
+        // TODO ... all oauth_* params need to go the query string?!?
+
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+}

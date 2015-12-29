@@ -22,7 +22,24 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.signing;
 
-rootProject.name = 'okhttp-oauth'
+import com.squareup.okhttp.contrib.oauth.OAuth;
+
+public class RsaSha1SignatureMethod implements SignatureMethod {
+
+    @Override
+    public SignatureMethod withKey(String consumerSecret, String tokenSecret) throws SigningException {
+        throw new SigningException("Not yet implemented", null);
+    }
+
+    @Override
+    public String signatureOf(String baseString) throws SigningException {
+        throw new SigningException("Not yet implemented", null);
+    }
+
+    @Override
+    public String methodName() {
+        return OAuth.SIGNATURE_METHOD_VALUE_RSA_SHA1;
+    }
+}

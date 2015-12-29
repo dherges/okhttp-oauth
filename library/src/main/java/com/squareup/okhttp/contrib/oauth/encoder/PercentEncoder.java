@@ -22,7 +22,28 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.encoder;
 
-rootProject.name = 'okhttp-oauth'
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+
+public class PercentEncoder {
+
+    public static String encode(String input) {
+        try {
+            return URLEncoder.encode(input, "UTF-8");
+        } catch (UnsupportedEncodingException e) { // this simply MUST NOT fail
+            return input;
+        }
+    }
+
+    public static String decode(String input) {
+        try {
+            return URLDecoder.decode(input, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return input; // this simply MUST NOT fail
+        }
+    }
+
+}

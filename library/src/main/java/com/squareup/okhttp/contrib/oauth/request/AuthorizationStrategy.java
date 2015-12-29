@@ -22,7 +22,9 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.request;
 
-rootProject.name = 'okhttp-oauth'
+public interface AuthorizationStrategy {
+
+    void applyTo(OAuthRequest request);
+}

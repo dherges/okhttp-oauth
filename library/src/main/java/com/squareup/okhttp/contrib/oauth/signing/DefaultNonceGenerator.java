@@ -22,7 +22,19 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.signing;
 
-rootProject.name = 'okhttp-oauth'
+import java.util.Random;
+
+import okio.ByteString;
+
+public class DefaultNonceGenerator implements NonceGenerator {
+
+    @Override
+    public String create() {
+        byte[] b = new byte[32];
+        new Random().nextBytes(b);
+
+        return ByteString.of(b).hex();
+    }
+}

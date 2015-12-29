@@ -22,7 +22,29 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth;
 
-rootProject.name = 'okhttp-oauth'
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+public interface OAuthClient {
+
+    OkHttpClient okHttpClient();
+
+    OAuthConsumer consumer();
+
+    OAuthProvider provider();
+
+    Call newRequestToken(String callback);
+
+    Call newAccessToken(String verifier);
+
+    void obtainedRequestToken(Response response);
+
+    void obtainedAccessToken(Response response);
+
+    Request sign(Request request);
+
+}

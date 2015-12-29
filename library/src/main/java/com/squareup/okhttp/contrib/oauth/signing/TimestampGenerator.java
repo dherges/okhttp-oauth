@@ -22,7 +22,10 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.signing;
 
-rootProject.name = 'okhttp-oauth'
+/** Provider creating timestamps */
+public interface TimestampGenerator {
+
+    long create();
+}

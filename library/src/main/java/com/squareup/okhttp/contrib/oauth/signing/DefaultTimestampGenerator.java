@@ -22,7 +22,12 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.signing;
 
-rootProject.name = 'okhttp-oauth'
+public class DefaultTimestampGenerator implements TimestampGenerator {
+
+    @Override
+    public long create() {
+        return System.currentTimeMillis() / 1000l;
+    }
+}

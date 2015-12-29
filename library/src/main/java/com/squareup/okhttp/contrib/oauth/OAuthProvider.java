@@ -22,7 +22,21 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth;
 
-rootProject.name = 'okhttp-oauth'
+
+/** Abstraction of the service provider, e.g. Google, Twitter, and so on... */
+public interface OAuthProvider {
+
+
+    String requestTokenUrl();
+
+    String requestTokenVerb();
+
+    String accessTokenUrl();
+
+    String accessTokenVerb();
+
+    String authorizationUrl();
+
+}

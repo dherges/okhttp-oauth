@@ -22,7 +22,14 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth;
 
-rootProject.name = 'okhttp-oauth'
+
+/** Abstraction of the consumer, i.e. a client application. */
+public interface OAuthConsumer {
+
+
+    String key();
+
+    String secret();
+}

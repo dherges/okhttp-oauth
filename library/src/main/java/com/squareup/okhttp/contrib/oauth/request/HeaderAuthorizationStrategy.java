@@ -22,7 +22,33 @@
  * SOFTWARE.
  */
 
-include ':library'
-include ':sample'
+package com.squareup.okhttp.contrib.oauth.request;
 
-rootProject.name = 'okhttp-oauth'
+import com.squareup.okhttp.Request;
+
+import okio.Buffer;
+
+public class HeaderAuthorizationStrategy implements AuthorizationStrategy {
+
+    @Override
+    public void applyTo(OAuthRequest request) {
+        final Buffer authString = new Buffer();
+        for (String key : request.oauth().keySet()) {
+            if (authString.size() > 0) {
+                authString.writeUtf8(", ");
+            } else {
+                authString.writeUtf8("OAuth ");
+            }
+            authString.writeUtf8(key)
+                    .writeUtf8("=\"")
+                    .writeUtf8(request.oauth().get(key))
+                    .writeUtf8("\"");
+        }
+
+        final Request req = request.originalRequest().newBuilder()
+            .header("Authorization", authString.readUtf8())
+            .build();
+
+        request.authorizedRequest(req);
+    }
+}
