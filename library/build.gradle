@@ -25,13 +25,14 @@
 apply plugin: 'java'
 
 dependencies {
-    testCompile 'junit:junit:4.12'
-
-    // https://github.com/square/okhttp/
-    compile 'com.squareup.okhttp:okhttp:2.7.0'
-    compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.assertj:assertj-core:1.7.1'
 
     // https://github.com/square/okio/
     compile 'com.squareup.okio:okio:1.6.0'
+
+    // https://github.com/square/okhttp/
+    compile 'com.squareup.okhttp:okhttp:2.7.0'
+    compile 'com.squareup.okhttp:logging-interceptor:2.7.0'
 
 }

@@ -35,5 +35,5 @@ dependencies {
     compile 'com.squareup.retrofit:converter-moshi:2.0.0-beta2'
 
 
-    testCompile 'com.squareup.okhttp:mockwebserver:2.6.0'
+    testCompile 'com.squareup.okhttp:mockwebserver:2.7.0'
 }
