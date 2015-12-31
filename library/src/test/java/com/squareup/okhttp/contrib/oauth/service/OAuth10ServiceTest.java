@@ -26,6 +26,7 @@ package com.squareup.okhttp.contrib.oauth.service;
 
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.contrib.oauth.OAuth;
 import com.squareup.okhttp.contrib.oauth.OAuthConsumer;
 import com.squareup.okhttp.contrib.oauth.consumer.DefaultOAuthConsumer;
 import com.squareup.okhttp.contrib.oauth.request.OAuthRequest;
@@ -45,41 +46,45 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @link https://dev.twitter.com/oauth/overview/authorizing-requests
  * @link https://dev.twitter.com/oauth/overview/creating-signatures
  */
-public class SignatureTest {
+public class OAuth10ServiceTest {
 
 
-    protected final String consumerKey = "xvz1evFS4wEEPTGEFPHBog";
-    protected final String consumerSecret = "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw";
-    protected final String tokenValue = "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb";
-    protected final String tokenSecret = "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE";
+    protected static final String A_CONSUMER_KEY = "xvz1evFS4wEEPTGEFPHBog";
+    protected static final String A_CONSUMER_SECRET = "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw";
+    protected static final String A_TOKEN_VALUE = "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb";
+    protected static final String A_TOKEN_SECRET = "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE";
+    protected static final String A_NONCE = "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg";
+    protected static final long A_TIME = 1318622958;
+
+    protected static final String B_CONSUMER_KEY = "cChZNFj6T5R0TigYB9yd1w";
+    protected static final String B_CONSUMER_SECRET = "L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg";
+    protected static final String B_NONCE = "ea9ec8429b68d6b77cd5600adbbb0456";
+    protected static final long B_TIME = 1318467427;
 
     @Test
-    public void testSignRequestWithTokenAndSecret() throws Exception {
+    public void authorizeRequestWithToken() throws Exception {
+        final OAuthConsumer consumer = new DefaultOAuthConsumer(A_CONSUMER_KEY, A_CONSUMER_SECRET);
+        final Token token = new DefaultToken(A_TOKEN_VALUE, A_TOKEN_SECRET);
         final OAuth10Service service = new OAuth10Service();
         service.nonce = new NonceGenerator() {
             @Override
             public String create() {
-                return "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg";
+                return A_NONCE;
             }
         };
         service.timestamp = new TimestampGenerator() {
             @Override
             public long create() {
-                return 1318622958;
+                return A_TIME;
             }
         };
 
-        final OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
-        final Token token = new DefaultToken(tokenValue, tokenSecret);
-
-        final Request request = new Request.Builder()
+        final OAuthRequest oAuthRequest = new OAuthRequest(new Request.Builder()
                 .url("https://api.twitter.com/1/statuses/update.json?include_entities=true")
                 .post(new FormEncodingBuilder()
                         .add("status", "Hello Ladies + Gentlemen, a signed OAuth request!")
                         .build())
-                .build();
-
-        final OAuthRequest oAuthRequest = new OAuthRequest(request);
+                .build());
 
         final OAuthRequest authorized = service.authorizeRequest(oAuthRequest, consumer, token);
 
@@ -99,37 +104,39 @@ public class SignatureTest {
                         + ", oauth_version=\"1.0\"");
     }
 
-/*
+
     @Test
-    public void testSignRequestWithConsumerKeySecret() throws Exception {
-        final RequestSigner signer = new RequestSigner.Builder()
-                .consumer("cChZNFj6T5R0TigYB9yd1w", "L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg")
-                .nonce(new OAuth.NonceGenerator() {
+    public void authorizeRequestWithoutToken() throws Exception {
+        final OAuthConsumer consumer = new DefaultOAuthConsumer(B_CONSUMER_KEY, B_CONSUMER_SECRET);
+        final OAuth10Service service = new OAuth10Service();
+        service.nonce = new NonceGenerator() {
+            @Override
+            public String create() {
+                return B_NONCE;
+            }
+        };
+        service.timestamp = new TimestampGenerator() {
+            @Override
+            public long create() {
+                return B_TIME;
+            }
+        };
 
-                    @Override
-                    public String create() {
-                        return "ea9ec8429b68d6b77cd5600adbbb0456";
-                    }
-                })
-                .timestamp(new OAuth.TimestampGenerator() {
+        final OAuthRequest oAuthRequest = new OAuthRequest(
+                new Request.Builder()
+                .url("https://api.twitter.com/oauth/request_token")
+                .method("POST", new FormEncodingBuilder()
+                        .add(OAuth.CALLBACK, "http://localhost/sign-in-with-twitter/")
+                        .build())
+                .build());
 
-                    @Override
-                    public long create() {
-                        return 1318467427;
-                    }
-                })
-                .build();
+        final OAuthRequest authorized = service.authorizeRequest(oAuthRequest, consumer, null);
 
-        final OAuthRequest oAuthRequest = new OAuthRequest.Builder()
-                .requestToken("POST", "https://api.twitter.com/oauth/request_token", "http://localhost/sign-in-with-twitter/")
-                .build();
 
-        final OAuthRequest signed = signer.signRequest(oAuthRequest);
+        assertThat(authorized).isNotNull();
 
-        assertThat(signed).isNotNull();
-
-        assertThat(signed.oauth().get("oauth_signature"))
+        assertThat(authorized.oauth().get("oauth_signature"))
                 .isEqualTo("F1Li3tvehgcraF8DMJ7OyxO4w9Y=");
-    }*/
+    }
 
 }
