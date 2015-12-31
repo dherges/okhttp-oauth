@@ -90,14 +90,14 @@ public class OAuth10Service implements OAuthService {
 
         // Collect signing params, need to percent encode all the values
         final SortedMap<String, String> signingParams = new TreeMap<>();
-        for (String key : request.oauth().keySet()) {
-            signingParams.put(key, PercentEncoder.encode(request.oauth().get(key)));
+        for (String key : authorized.oauth().keySet()) {
+            signingParams.put(key, PercentEncoder.encode(authorized.oauth().get(key)));
         }
         for (String key : request.query().keySet()) {
             signingParams.put(key, PercentEncoder.encode(request.query().get(key)));
         }
         for (String key : request.body().keySet()) {
-            signingParams.put(key, PercentEncoder.encode(request.body().get(key)));
+            signingParams.put(key, request.body().get(key)); // TODO ... running into issue if decoding body params first, encoding here again ...
         }
 
         // Create the parameter string
@@ -116,9 +116,9 @@ public class OAuth10Service implements OAuthService {
         final Buffer signatureBaseString = new Buffer()
                 .writeUtf8(request.verb())
                 .writeByte('&')
-                .writeUtf8(request.baseUrl())
+                .writeUtf8(PercentEncoder.encode(request.baseUrl()))
                 .writeByte('&')
-                .writeUtf8(parameterString.readUtf8());
+                .writeUtf8(PercentEncoder.encode(parameterString.readUtf8()));
 
         // Create oauth_signature
         final String tokenSecret = (token != null) && token.secret() != null ? token.secret() : "";

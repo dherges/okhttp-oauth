@@ -25,6 +25,7 @@
 package com.squareup.okhttp.contrib.oauth.request;
 
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.contrib.oauth.encoder.PercentEncoder;
 
 import okio.Buffer;
 
@@ -41,7 +42,7 @@ public class HeaderAuthorizationStrategy implements AuthorizationStrategy {
             }
             authString.writeUtf8(key)
                     .writeUtf8("=\"")
-                    .writeUtf8(request.oauth().get(key))
+                    .writeUtf8(PercentEncoder.encode(request.oauth().get(key)))
                     .writeUtf8("\"");
         }
 

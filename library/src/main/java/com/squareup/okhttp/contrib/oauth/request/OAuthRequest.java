@@ -117,7 +117,7 @@ public class OAuthRequest {
                     String value = valueEnd == -1 ? buffer.readUtf8() : buffer.readUtf8(valueEnd);
                     if (valueEnd != -1) buffer.skip(1); // Ampersand.
 
-                    bodyParams.put(PercentEncoder.decode(key), PercentEncoder.decode(value));
+                    bodyParams.put(PercentEncoder.decode(key), value);
                 }
             } catch (IOException e) {
             }

@@ -22,35 +22,27 @@
  * SOFTWARE.
  */
 
-package com.squareup.okhttp.contrib.oauth;
+package com.squareup.okhttp.contrib.oauth.consumer;
 
-import com.squareup.okhttp.contrib.oauth.service.OAuth10Service;
+import com.squareup.okhttp.contrib.oauth.OAuthConsumer;
 
-public class TwitterOAuth extends OAuth10Service implements OAuthProvider, OAuthService {
+public class DefaultOAuthConsumer implements OAuthConsumer {
 
-    @Override
-    public String requestTokenUrl() {
-        return "https://api.twitter.com/oauth/request_token";
+    protected final String key;
+    protected final String secret;
+
+    public DefaultOAuthConsumer(String key, String secret) {
+        this.key = key;
+        this.secret = secret;
     }
 
     @Override
-    public String requestTokenVerb() {
-        return "POST";
+    public String key() {
+        return key;
     }
 
     @Override
-    public String accessTokenUrl() {
-        return "https://api.twitter.com/oauth/access_token";
+    public String secret() {
+        return secret;
     }
-
-    @Override
-    public String accessTokenVerb() {
-        return "POST";
-    }
-
-    @Override
-    public String authorizationUrl() {
-        return "https://api.twitter.com/oauth/authorize";
-    }
-
 }
