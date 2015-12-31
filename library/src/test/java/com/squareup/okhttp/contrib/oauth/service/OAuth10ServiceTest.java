@@ -48,34 +48,51 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class OAuth10ServiceTest {
 
+    private interface TestA {
 
-    protected static final String A_CONSUMER_KEY = "xvz1evFS4wEEPTGEFPHBog";
-    protected static final String A_CONSUMER_SECRET = "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw";
-    protected static final String A_TOKEN_VALUE = "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb";
-    protected static final String A_TOKEN_SECRET = "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE";
-    protected static final String A_NONCE = "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg";
-    protected static final long A_TIME = 1318622958;
+        String CONSUMER_KEY = "xvz1evFS4wEEPTGEFPHBog";
+        String CONSUMER_SECRET = "kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw";
+        String TOKEN_VALUE = "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb";
+        String TOKEN_SECRET = "LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE";
+        String NONCE = "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg";
+        long TIME = 1318622958;
+    }
 
-    protected static final String B_CONSUMER_KEY = "cChZNFj6T5R0TigYB9yd1w";
-    protected static final String B_CONSUMER_SECRET = "L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg";
-    protected static final String B_NONCE = "ea9ec8429b68d6b77cd5600adbbb0456";
-    protected static final long B_TIME = 1318467427;
+    private interface TestB {
 
+        String CONSUMER_KEY = "cChZNFj6T5R0TigYB9yd1w";
+        String CONSUMER_SECRET = "L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg";
+        String NONCE = "ea9ec8429b68d6b77cd5600adbbb0456";
+        long TIME = 1318467427;
+    }
+
+    private interface TestC {
+
+        String CONSUMER_KEY = TestB.CONSUMER_KEY;
+        String CONSUMER_SECRET = TestB.CONSUMER_SECRET;
+        String TOKEN_VALUE = "NPcudxy0yU5T3tBzho7iCotZ3cnetKwcTIRlX0iwRl0";
+        String TOKEN_SECRET = "veNRnAWe6inFuo8o2u8SLLZLjolYDmDP7SzL0YfYI";
+        String NONCE = "a9900fe68e2573b27a37f10fbad6a755";
+        long TIME = TestB.TIME;
+    }
+
+
+    /** https://dev.twitter.com/oauth/overview/creating-signatures */
     @Test
     public void authorizeRequestWithToken() throws Exception {
-        final OAuthConsumer consumer = new DefaultOAuthConsumer(A_CONSUMER_KEY, A_CONSUMER_SECRET);
-        final Token token = new DefaultToken(A_TOKEN_VALUE, A_TOKEN_SECRET);
+        final OAuthConsumer consumer = new DefaultOAuthConsumer(TestA.CONSUMER_KEY, TestA.CONSUMER_SECRET);
+        final Token token = new DefaultToken(TestA.TOKEN_VALUE, TestA.TOKEN_SECRET);
         final OAuth10Service service = new OAuth10Service();
         service.nonce = new NonceGenerator() {
             @Override
             public String create() {
-                return A_NONCE;
+                return TestA.NONCE;
             }
         };
         service.timestamp = new TimestampGenerator() {
             @Override
             public long create() {
-                return A_TIME;
+                return TestA.TIME;
             }
         };
 
@@ -105,20 +122,21 @@ public class OAuth10ServiceTest {
     }
 
 
+    /** https://dev.twitter.com/web/sign-in/implementing --> Step 1: Obtaining a request token */
     @Test
     public void authorizeRequestWithoutToken() throws Exception {
-        final OAuthConsumer consumer = new DefaultOAuthConsumer(B_CONSUMER_KEY, B_CONSUMER_SECRET);
+        final OAuthConsumer consumer = new DefaultOAuthConsumer(TestB.CONSUMER_KEY, TestB.CONSUMER_SECRET);
         final OAuth10Service service = new OAuth10Service();
         service.nonce = new NonceGenerator() {
             @Override
             public String create() {
-                return B_NONCE;
+                return TestB.NONCE;
             }
         };
         service.timestamp = new TimestampGenerator() {
             @Override
             public long create() {
-                return B_TIME;
+                return TestB.TIME;
             }
         };
 
@@ -137,6 +155,43 @@ public class OAuth10ServiceTest {
 
         assertThat(authorized.oauth().get("oauth_signature"))
                 .isEqualTo("F1Li3tvehgcraF8DMJ7OyxO4w9Y=");
+    }
+
+
+    /** https://dev.twitter.com/web/sign-in/implementing --> Step 3: Converting the request token to an access token */
+    @Test
+    public void authorizeRequestWithToken2() throws Exception {
+        final OAuthConsumer consumer = new DefaultOAuthConsumer(TestC.CONSUMER_KEY, TestC.CONSUMER_SECRET);
+        final Token token = new DefaultToken(TestC.TOKEN_VALUE, TestC.TOKEN_SECRET);
+        final OAuth10Service service = new OAuth10Service();
+        service.nonce = new NonceGenerator() {
+            @Override
+            public String create() {
+                return TestC.NONCE;
+            }
+        };
+        service.timestamp = new TimestampGenerator() {
+            @Override
+            public long create() {
+                return TestC.TIME;
+            }
+        };
+
+        final OAuthRequest oAuthRequest = new OAuthRequest(
+                new Request.Builder()
+                        .url("https://api.twitter.com/oauth/access_token")
+                        .method("POST", new FormEncodingBuilder()
+                                .add(OAuth.VERIFIER, "uw7NjWHT6OJ1MpJOXsHfNxoAhPKpgI8BlYDhxEjIBY")
+                                .build())
+                        .build());
+
+        final OAuthRequest authorized = service.authorizeRequest(oAuthRequest, consumer, null);
+
+
+        assertThat(authorized).isNotNull();
+
+        assertThat(authorized.oauth().get("oauth_signature"))
+                .isEqualTo("39cipBtIOHEEnybAR4sATQTpl2I=");
     }
 
 }
